@@ -1,19 +1,18 @@
 # SLDMC
 
-SLDMC estimates the correlation between *predicted* variant effects on gene expression — for example
-the effects predicted by a sequence-to-expression model such as Borzoi — and *true* causal cis-eQTL
-effect sizes, stratified by variant-gene annotation.
+SLDMC estimates the correlation between *predicted* variant effects on gene expression and *true* causal cis-eQTL
+effect sizes, stratified by variant-gene annotations. A predicted variant-gene effect is, for example,
+the effects predicted by a sequence-to-expression model such as Borzoi ir AlphaGenome.
 
 The estimator requires only marginal eQTL summary statistics and LD; it does not require individual-level
 expression data, and it does not require knowing which variants are causal. Because the correlation is
 estimated separately within each category of an annotation, SLDMC can be used to ask where a predictor
-is well correlated and where it is not (e.g. by distance to TSS, by allele frequency, by predicted effect
-magnitude, or within functional annotations).
+is well correlated with the truth and where it is not (e.g. by distance to TSS, by allele frequency, by predicted effect
+magnitude, or within functional annotations). It can also be used to assess calibration.
 
 ## Method overview
 
-Analysis is performed one gene at a time, over the cis variants of that gene, and results are then
-aggregated across genes. For each category `c` of an annotation, SLDMC estimates three quantities:
+Analysis is performed across genes, and across all the cis variants of that gene. For each category `c` of an annotation, SLDMC estimates three quantities:
 
 1. **Calibration slope** `α_c` — the slope from regressing marginal eQTL effect sizes on LD-weighted
    predicted effects, restricted to variants in category `c`.
