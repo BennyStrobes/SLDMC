@@ -372,6 +372,15 @@ def generate_gene_ld_means(gene_id_to_est_borzoi_effects,gene_id_to_est_borzoi_e
 			row_means = np.nanmean(geno_mat, axis=1)
 			nan_rows, nan_cols = np.where(np.isnan(geno_mat))
 			geno_mat[nan_rows, nan_cols] = row_means[nan_rows]
+
+			# A variant with no genotype variance in this sample gets an all-nan row AND column in
+			# the correlation matrix. The row is harmless (it drops out per-variant below), but a
+			# surviving nan column propagates through every matrix product and silently voids the
+			# entire gene, so mark these missing on both ends and let the subsetting remove them.
+			degenerate_indices = (np.std(geno_mat, axis=1) > 0.0) == False
+			eqtl_effects[degenerate_indices] = np.nan
+			borzoi_effects[degenerate_indices] = np.nan
+
 			LD = np.corrcoef(geno_mat)
 
 			# Subset LD by missingness
