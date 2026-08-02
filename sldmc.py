@@ -515,7 +515,27 @@ def run_ld_corr(anno_names, ordered_gene_names, gene_id_to_ld_means):
 	return anno_name_to_results
 
 
-
+def print_SLDMC_bear():
+	# Credit: https://github.com/ivolo/animals/blob/master/data/animals.txt
+	print(r"""
+   _,-""`""-~`)
+(`~           \
+ |     a   a   \
+ ;        o     ; ___  _,,,,_     _.-~'.
+  \      `^`    /`_.-"~      `~-;`      \
+   \_      _  .'                 `,     |
+     |`-                           \'__/
+    /                      ,_       \  `'-.
+   /    .-""~~--.            `"-,   ;_    /
+  |              \               \  | `""`
+   \__.--'`"-.   /_               |'
+              `"`  `~~~---..,     |
+   SLDMC                     \ _.-'`-.
+                              \       \
+                               '.     /
+                                 `"~"`
+	""")
+	return
 
 
 
@@ -543,6 +563,8 @@ genotype_sample_mapping_file = args.genotype_sample_mapping_file
 ld_corr_output_stem = args.ld_corr_output_stem
 weighted = args.weighted
 bootstrapped_gene_sets_filestem = args.bootstrapped_gene_sets_filestem
+
+print_SLDMC_bear()
 
 # Companion file describing the (annotation, category) pairs in the annotation file
 annotation_category_file = sim_variant_gene_annotation_file.split('.txt.gz')[0] + '_categories.txt'
