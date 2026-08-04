@@ -157,11 +157,10 @@ def create_mapping_from_gene_id_to_est_eqtl_effect_sizes(est_eqtl_effect_size_fi
 		se = float(data[7])
 		eqtl_sample_size = float(data[8])
 		maf = float(data[9])
-		if len(data) < 12:
+		if len(data) < 11 or data[10] == 'nan':
 			genotype_sdev = np.sqrt(2.0*maf*(1.0-maf))
 		else:
-			genotype_sdev = float(data[11])
-
+			genotype_sdev = float(data[10])
 		std_effect = effect*genotype_sdev
 		std_se = se*genotype_sdev
 		variant_id_to_geno_sdev[var_id] = genotype_sdev
@@ -552,6 +551,7 @@ parser.add_argument('--genotype-plink-filestem', dest='genotype_plink_filestem',
 parser.add_argument('--genotype-sample-mapping-file', dest='genotype_sample_mapping_file', required=True, help='Genotype sample indices for in-sample LD.')
 parser.add_argument('--ld-corr-output-stem', dest='ld_corr_output_stem', required=True, help='Output filestem.')
 parser.add_argument('--bootstrapped-gene-set-filestem', dest='bootstrapped_gene_sets_filestem', default=None, required=False, help='Filestem corresponding to a list of files with bootrapped gene names')
+parser.add_argument('--n-bootstraps', dest='n_bootstraps', type=int, default=500, required=False, help='Number of bootstrap iterations (default: 500).')
 parser.add_argument('--weighted', dest='weighted', type=str2bool, default=True, help='Whether to use weighted regression (True/False).')
 args = parser.parse_args()
 
@@ -563,6 +563,7 @@ genotype_sample_mapping_file = args.genotype_sample_mapping_file
 ld_corr_output_stem = args.ld_corr_output_stem
 weighted = args.weighted
 bootstrapped_gene_sets_filestem = args.bootstrapped_gene_sets_filestem
+n_bootstraps = args.n_bootstraps
 
 print_SLDMC_bear()
 
@@ -611,7 +612,7 @@ ordered_gene_names = np.asarray([*gene_id_to_ld_means])
 observed_results = run_ld_corr(anno_names, ordered_gene_names, gene_id_to_ld_means)
 
 # Bootstrap estimates! The same resampled gene set is shared across annotations each iteration.
-n_bs = 100
+n_bs = n_bootstraps
 bs_results = []
 for bs_iter in range(n_bs):
 	print('bootstrap itera: ' + str(bs_iter))

@@ -58,6 +58,7 @@ python sldmc.py \
     --genotype-sample-mapping-file genotype_sample_mapping.txt \
     --ld-corr-output-stem /path/to/output/my_analysis \
     --bootstrapped-gene-set-filestem /path/to/gene_sets/bootstrap_ \
+    --n-bootstraps 500 \
     --weighted True
 ```
 
@@ -70,6 +71,7 @@ python sldmc.py \
 | `--genotype-sample-mapping-file` | yes | Which genotype samples make up the eQTL sample |
 | `--ld-corr-output-stem` | yes | Output filestem |
 | `--bootstrapped-gene-set-filestem` | no | Pre-specified bootstrap gene sets (see below) |
+| `--n-bootstraps` | no | Number of bootstrap iterations. Default `500` |
 | `--weighted` | no | Use LD score regression weights. Default `True` |
 
 A gene is analyzed only if it appears in all three of the effect, eQTL, and annotation files, and has at
@@ -110,11 +112,12 @@ deviation internally. Both the standardized and unstandardized variances are rep
 | 8 | `eqtl_effect_size_se` | Standard error of the effect size |
 | 9 | `N` | eQTL sample size |
 | 10 | `maf` | Minor allele frequency |
-| 11 | *(unused)* | Ignored if present |
-| 12 | *(optional)* | Genotype standard deviation |
+| 11 | `genotype_sdev` | *(optional)* Genotype standard deviation |
 
-If a 12th column is present it is used as the per-variant genotype standard deviation. Otherwise the
-standard deviation is computed from the MAF as `sqrt(2 * maf * (1 - maf))`.
+If an 11th column is present it is used as the per-variant genotype standard deviation. If it is absent,
+or its value is the literal string `nan`, the standard deviation is computed from the MAF as
+`sqrt(2 * maf * (1 - maf))`. This lets a file mix variants that have a measured standard deviation with
+variants that do not.
 
 ### Variant-gene annotation file (`--sim-variant-gene-annotation-file`)
 
@@ -165,8 +168,9 @@ than from an external reference panel.
 ### Bootstrapped gene sets (`--bootstrapped-gene-set-filestem`, optional)
 
 If omitted, each bootstrap iteration resamples genes independently within the run. If supplied, SLDMC
-reads `<filestem>0.txt` through `<filestem>99.txt`; each file has a header line followed by one gene ID
-per line, sampled with replacement. Gene IDs not present in the current analysis are dropped.
+reads `<filestem>0.txt` through `<filestem><n-1>.txt`, where `n` is `--n-bootstraps`; each file has a
+header line followed by one gene ID per line, sampled with replacement. Gene IDs not present in the
+current analysis are dropped.
 
 Supplying pre-specified gene sets is what makes results comparable across separate SLDMC runs: when
 every run resamples the same genes on iteration `i`, the bootstrap distributions are aligned and can be
@@ -179,7 +183,7 @@ Two tab-delimited files are written, both prefixed with `--ld-corr-output-stem`.
 ### `<stem>_bootstrap_summary.txt`
 
 One row per (annotation, category, sample). The `observed` row (with `sample_iter` of `-1`) holds the
-point estimate; the remaining rows hold the 100 bootstrap iterations.
+point estimate; the remaining rows hold the `--n-bootstraps` bootstrap iterations.
 
 | Column | Description |
 | --- | --- |
