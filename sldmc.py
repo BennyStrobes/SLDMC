@@ -157,10 +157,10 @@ def create_mapping_from_gene_id_to_est_eqtl_effect_sizes(est_eqtl_effect_size_fi
 		se = float(data[7])
 		eqtl_sample_size = float(data[8])
 		maf = float(data[9])
-		if len(data) < 11 or data[10] == 'nan':
+		if len(data) < 12 or data[11] == 'nan':
 			genotype_sdev = np.sqrt(2.0*maf*(1.0-maf))
 		else:
-			genotype_sdev = float(data[10])
+			genotype_sdev = float(data[11])
 		std_effect = effect*genotype_sdev
 		std_se = se*genotype_sdev
 		variant_id_to_geno_sdev[var_id] = genotype_sdev
