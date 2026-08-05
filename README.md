@@ -31,7 +31,7 @@ Both eQTL effect sizes and predicted effect sizes are put on a standardized-geno
 regressions are run. LD is computed in-sample, from the genotypes of the individuals in the eQTL study.
 
 Standard errors and confidence intervals come from a bootstrap that resamples **genes** with replacement
-(100 iterations). Each gene contributes a small set of sufficient statistics (`XᵀX` and `Xᵀy` per
+(`--n-bootstraps` iterations, 500 by default). Each gene contributes a small set of sufficient statistics (`XᵀX` and `Xᵀy` per
 regression), so bootstrap iterations only require re-summing per-gene matrices rather than re-reading
 genotypes.
 
@@ -112,9 +112,13 @@ deviation internally. Both the standardized and unstandardized variances are rep
 | 8 | `eqtl_effect_size_se` | Standard error of the effect size |
 | 9 | `N` | eQTL sample size |
 | 10 | `maf` | Minor allele frequency |
-| 11 | `genotype_sdev` | *(optional)* Genotype standard deviation |
+| 11 | `distance_to_tss` | Distance from the variant to the gene's TSS. Read but not used by SLDMC |
+| 12 | `genotype_sdev` | *(optional)* Genotype standard deviation |
 
-If an 11th column is present it is used as the per-variant genotype standard deviation. If it is absent,
+Columns are read by position, not by header name, so the first eleven columns must all be present even
+though SLDMC does not currently use `distance_to_tss`.
+
+If a 12th column is present it is used as the per-variant genotype standard deviation. If it is absent,
 or its value is the literal string `nan`, the standard deviation is computed from the MAF as
 `sqrt(2 * maf * (1 - maf))`. This lets a file mix variants that have a measured standard deviation with
 variants that do not.
